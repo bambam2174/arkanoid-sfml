@@ -74,7 +74,24 @@ int main(void)
         {
             dx = -dx;
         }
-        if (posBall.y < 0 || posBall.y > 440)
+        if (posBall.y < 0)
+        {
+            dy = -dy;
+        }
+        if (posBall.y > 440)
+        {
+            sBall.setPosition(300, 300);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            sPaddle.move(-6, 0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            sPaddle.move(6, 0);
+        }
+
+        if (hasCollided(sBall, sPaddle))
         {
             dy = -dy;
         }
