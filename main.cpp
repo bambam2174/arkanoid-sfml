@@ -8,6 +8,7 @@ bool hasCollided(sf::Sprite, sf::Sprite);
 int main(void)
 {
     srand((uint)time(NULL));
+
     sf::RenderWindow app(sf::VideoMode(520, 450), "Arkanoid");
     app.setFramerateLimit(60);
 
@@ -46,7 +47,26 @@ int main(void)
                 app.close();
         }
 
-        sBall.move(dx, dy);
+        sBall.move(dx, 0);
+        for (int i = 0; i < n; i++)
+        {
+            if (hasCollided(sBall, sBlocks[i]))
+            {
+                sBlocks[i].setPosition(-100, -100);
+                dx = -dx;
+            }
+        }
+
+        sBall.move(0, dy);
+        ;
+        for (int i = 0; i < n; i++)
+        {
+            if (hasCollided(sBall, sBlocks[i]))
+            {
+                sBlocks[i].setPosition(-100, -100);
+                dy = -dy;
+            }
+        }
 
         sf::Vector2f posBall = sBall.getPosition();
 
