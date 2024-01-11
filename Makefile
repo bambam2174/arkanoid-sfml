@@ -39,4 +39,6 @@ clean:
 	rm -rf build
 
 install:
-	ln -s "${PWD}/build/release/arkanoid" /usr/local/bin
+	mkdir -p /usr/local/sfml-games
+	cp -r "./build/release" /usr/local/sfml-games/arkanoid
+	ln -s "/usr/local/sfml-games/arkanoid/arkanoid" /usr/local/bin

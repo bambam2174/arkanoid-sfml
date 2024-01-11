@@ -2,8 +2,17 @@
 #include <time.h>
 #include <array>
 #include <iostream>
+#include <cmath>
+
+#define DUMMY_INT = MA
+
+const float PI = atan(1) * 4;
 
 bool hasCollided(sf::Sprite, sf::Sprite);
+int ballHitsPaddle(sf::Sprite, sf::Sprite);
+float getAngle(const sf::Vector2<float> &, const sf::Vector2<float> &);
+float rad2deg(float);
+float deg2rad(float);
 
 int main(void)
 {
@@ -37,6 +46,7 @@ int main(void)
     }
 
     float dx = 6, dy = 5;
+    float paddleX = 6;
 
     while (app.isOpen())
     {
@@ -72,11 +82,11 @@ int main(void)
 
         if (posBall.x < 0 || posBall.x > 520)
         {
-            dx = -dx;
+            dx *= -1.f;
         }
         if (posBall.y < 0)
         {
-            dy = -dy;
+            dy *= -1.f;
         }
         if (posBall.y > 440)
         {
@@ -84,11 +94,22 @@ int main(void)
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
-            sPaddle.move(-6, 0);
+
+            if (sPaddle.getPosition().x + sPaddle.getGlobalBounds().width / 2 > 0)
+            {
+                sPaddle.move(-paddleX, 0);
+            }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
-            sPaddle.move(6, 0);
+            if (sPaddle.getPosition().x + sPaddle.getGlobalBounds().width / 2 < 520)
+            {
+                sPaddle.move(paddleX, 0);
+            }
+        }
+        else
+        {
+            paddleX = 6.f;
         }
 
         if (hasCollided(sBall, sPaddle))
@@ -114,4 +135,29 @@ int main(void)
 bool hasCollided(sf::Sprite s1, sf::Sprite s2)
 {
     return s1.getGlobalBounds().intersects(s2.getGlobalBounds());
+}
+
+int ballHitsPaddle(sf::Sprite sCurrentBall, sf::Sprite sCurrentPaddle)
+{
+    float unitX = sCurrentPaddle.getGlobalBounds().width / 8.f;
+
+    float middleBallX = sCurrentBall.getPosition().x + sCurrentBall.getGlobalBounds().width / 2;
+    float middlePaddleX = sCurrentPaddle.getPosition().x + sCurrentPaddle.getGlobalBounds().width / 2;
+}
+
+float getAngleRadians(const sf::Vector2<float> &a, const sf::Vector2<float> &b)
+{
+    float scalar = a.x * b.x + a.y * b.y;
+    float betrag = sqrt(pow(a.x, 2) + pow(a.y, 2)) * sqrt(pow(b.x, 2) + pow(b.y, 2));
+    return acos(scalar / betrag);
+}
+
+float rad2deg(float rad)
+{
+    return rad / M_PI * 180;
+}
+
+float deg2rad(float deg)
+{
+    return deg * M_PI / 180;
 }
