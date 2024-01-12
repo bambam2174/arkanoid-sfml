@@ -9,10 +9,12 @@
 const float PI = atan(1) * 4;
 
 bool hasCollided(sf::Sprite, sf::Sprite);
-int ballHitsPaddle(sf::Sprite, sf::Sprite);
+float ballHitsPaddle(sf::Sprite, sf::Sprite);
 float getAngle(const sf::Vector2<float> &, const sf::Vector2<float> &);
 float rad2deg(float);
 float deg2rad(float);
+sf::Vector2<float> getNormalVector(float);
+float getCosFromHitX(float, float);
 
 int main(void)
 {
@@ -115,6 +117,10 @@ int main(void)
         if (hasCollided(sBall, sPaddle))
         {
             dy = -dy;
+            float hitX = ballHitsPaddle(sBall, sPaddle);
+            float cosX = getCosFromHitX(hitX, sPaddle.getGlobalBounds().width);
+            sf::Vector2<float> normalVector = getNormalVector(cosX);
+            float angle = getAngle(normalVector, sf::Vector2<float>(dx, dy));
         }
 
         app.clear();
@@ -137,12 +143,29 @@ bool hasCollided(sf::Sprite s1, sf::Sprite s2)
     return s1.getGlobalBounds().intersects(s2.getGlobalBounds());
 }
 
-int ballHitsPaddle(sf::Sprite sCurrentBall, sf::Sprite sCurrentPaddle)
+float ballHitsPaddle(sf::Sprite sCurrentBall, sf::Sprite sCurrentPaddle)
 {
-    float unitX = sCurrentPaddle.getGlobalBounds().width / 8.f;
+    // float unitX = sCurrentPaddle.getGlobalBounds().width / 8.f;
 
-    float middleBallX = sCurrentBall.getPosition().x + sCurrentBall.getGlobalBounds().width / 2;
+    // float middleBallX = sCurrentBall.getPosition().x + sCurrentBall.getGlobalBounds().width / 2;
     float middlePaddleX = sCurrentPaddle.getPosition().x + sCurrentPaddle.getGlobalBounds().width / 2;
+    float widthPaddle = sCurrentPaddle.getGlobalBounds().width;
+    float dX = sCurrentBall.getPosition().x - sCurrentPaddle.getPosition().x;
+    float hitX = 0;
+    if (dX < middlePaddleX)
+    {
+        hitX = dX - middlePaddleX;
+    }
+    else
+    {
+        hitX = dX - middlePaddleX;
+    }
+    return hitX;
+}
+
+float getCosFromHitX(float hitX, float widthPaddle)
+{
+    return 0.8 / widthPaddle / 2 * hitX;
 }
 
 float getAngleRadians(const sf::Vector2<float> &a, const sf::Vector2<float> &b)
@@ -160,4 +183,9 @@ float rad2deg(float rad)
 float deg2rad(float deg)
 {
     return deg * M_PI / 180;
+}
+
+sf::Vector2<float> getNormalVector(float cosX)
+{
+    return sf::Vector2<float>(cosX, sin(acos(cosX)));
 }
